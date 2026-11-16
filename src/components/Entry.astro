@@ -1,0 +1,25 @@
+---
+/**
+ * Two-column entry: a monospace label/date on the left, content on the right.
+ * Collapses to a single column on small screens.
+ */
+interface Props {
+  when?: string;
+  /** Wider label column, for skill-group names. */
+  wide?: boolean;
+  class?: string;
+}
+
+const { when, wide = false, class: className } = Astro.props;
+---
+
+<div
+  class:list={[
+    'grid gap-x-6 gap-y-1.5',
+    wide ? 'sm:grid-cols-[10.5rem_1fr]' : 'sm:grid-cols-[9rem_1fr]',
+    className,
+  ]}
+>
+  <div class="font-mono text-xs tabular-nums text-muted sm:pt-1">{when}</div>
+  <div class="min-w-0"><slot /></div>
+</div>

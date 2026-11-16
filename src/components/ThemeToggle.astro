@@ -1,0 +1,26 @@
+---
+import Icon from './Icon.astro';
+---
+
+<button
+  id="theme-toggle"
+  type="button"
+  aria-label="Toggle dark mode"
+  title="Toggle dark mode"
+  class="group inline-flex size-8 items-center justify-center rounded-md text-muted transition-colors hover:bg-surface hover:text-fg"
+>
+  <span class="transition-transform duration-300 group-hover:rotate-12 dark:hidden"><Icon name="sun" /></span>
+  <span class="hidden transition-transform duration-300 group-hover:-rotate-12 dark:inline"><Icon name="moon" /></span>
+</button>
+
+<script>
+  const btn = document.getElementById('theme-toggle');
+  btn?.addEventListener('click', () => {
+    const dark = document.documentElement.classList.toggle('dark');
+    try {
+      localStorage.setItem('theme', dark ? 'dark' : 'light');
+    } catch {
+      /* storage unavailable: theme still toggles for this page view */
+    }
+  });
+</script>

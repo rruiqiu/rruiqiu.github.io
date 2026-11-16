@@ -1,0 +1,38 @@
+---
+/**
+ * Company / school mark. Uses `logo` (a path under /public) when provided,
+ * otherwise a two-letter monogram on a quiet surface.
+ */
+interface Props {
+  name: string;
+  logo?: string;
+  /** Logo already includes its own background: fill the whole tile. */
+  logoFull?: boolean;
+}
+
+const { name, logo, logoFull = false } = Astro.props;
+
+function monogram(n: string): string {
+  const words = n.trim().split(/\s+/);
+  if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
+  const caps = n.match(/[A-Z]/g) ?? [];
+  if (caps.length >= 2) return caps.slice(0, 2).join('');
+  return n.slice(0, 2).toUpperCase();
+}
+---
+
+<span
+  class:list={[
+    'inline-flex size-9 shrink-0 select-none items-center justify-center overflow-hidden rounded-lg border border-line font-mono text-[11px] font-medium text-muted',
+    logo ? 'bg-white' : 'bg-surface',
+  ]}
+  aria-hidden="true"
+>
+  {
+    logo ? (
+      <img src={logo} alt="" class={logoFull ? 'size-full object-cover' : 'size-6 object-contain'} loading="lazy" />
+    ) : (
+      monogram(name)
+    )
+  }
+</span>

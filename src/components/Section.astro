@@ -1,0 +1,22 @@
+---
+interface Props {
+  title: string;
+  id?: string;
+  /** Reveal animation delay in ms (home page only). */
+  delay?: number;
+}
+
+const { title, id, delay } = Astro.props;
+---
+
+<section
+  id={id}
+  class:list={['mt-16 sm:mt-20', delay !== undefined && 'reveal']}
+  style={delay !== undefined ? `--d:${delay}ms` : undefined}
+>
+  <div class="mb-6 flex items-baseline justify-between gap-4">
+    <h2 class="font-mono text-xs uppercase tracking-[0.18em] text-muted">{title}</h2>
+    <slot name="aside" />
+  </div>
+  <slot />
+</section>

@@ -1,0 +1,79 @@
+---
+import Base from '../layouts/Base.astro';
+import { Image } from 'astro:assets';
+import Entry from '../components/Entry.astro';
+import Icon from '../components/Icon.astro';
+import { projects } from '../data/projects';
+
+const all = [...projects].sort((a, b) => b.year - a.year);
+---
+
+<Base title="Projects" description="All projects by Richard Qiu, newest first.">
+  <section class="mt-12 sm:mt-16">
+    <h1 class="text-2xl font-semibold tracking-tight">Projects</h1>
+    <p class="mt-2 text-muted">Everything worth a line, newest first.</p>
+  </section>
+
+  <div class="mt-10 divide-y divide-line border-y border-line">
+    {
+      all.map((p) => {
+        const primary = p.demo ?? p.github;
+        return (
+          <Entry when={String(p.year)} class="py-5">
+            <div class="flex gap-4">
+              {p.image && (
+                <a
+                  href={primary}
+                  target={primary ? '_blank' : undefined}
+                  rel={primary ? 'noopener' : undefined}
+                  tabindex={primary ? undefined : -1}
+                  class="group block shrink-0 self-start overflow-hidden rounded-md border border-line bg-surface"
+                  aria-label={`${p.name} preview`}
+                >
+                  <Image
+                    src={p.image}
+                    alt={p.imageAlt ?? ''}
+                    width={240}
+                    widths={[120, 240]}
+                    sizes="120px"
+                    format="webp"
+                    class="h-[4.5rem] w-[6rem] object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04] sm:h-[5.25rem] sm:w-[7rem]"
+                  />
+                </a>
+              )}
+              <div class="min-w-0 flex-1">
+            <div class="flex items-start justify-between gap-4">
+              <h2 class="font-medium leading-snug">
+                {primary ? (
+                  <a class="link" href={primary} target="_blank" rel="noopener">
+                    {p.name}
+                  </a>
+                ) : (
+                  p.name
+                )}
+              </h2>
+              {(p.github || p.demo) && (
+                <div class="flex shrink-0 items-center gap-2.5 pt-0.5 text-muted">
+                  {p.github && (
+                    <a href={p.github} target="_blank" rel="noopener" aria-label="Source on GitHub" class="transition-colors hover:text-fg">
+                      <Icon name="github" class="size-4" />
+                    </a>
+                  )}
+                  {p.demo && (
+                    <a href={p.demo} target="_blank" rel="noopener" aria-label="Live demo" class="transition-colors hover:text-fg">
+                      <Icon name="external" class="size-4" />
+                    </a>
+                  )}
+                </div>
+              )}
+            </div>
+            <p class="mt-1 text-sm leading-6 text-muted">{p.description}</p>
+            <p class="mt-2 font-mono text-[11px] text-muted">{p.stack.join(' · ')}</p>
+              </div>
+            </div>
+          </Entry>
+        );
+      })
+    }
+  </div>
+</Base>

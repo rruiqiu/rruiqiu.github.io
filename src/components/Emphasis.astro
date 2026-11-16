@@ -1,0 +1,22 @@
+---
+/**
+ * Renders a string in which **double-starred** spans are emphasised with a
+ * quiet underline. No HTML is interpreted, only the ** markers.
+ */
+interface Props {
+  text: string;
+}
+
+const { text } = Astro.props;
+const parts = text.split('**');
+---
+
+{
+  parts.map((part, i) =>
+    i % 2 === 1 ? (
+      <span class="font-medium text-fg underline decoration-muted/50 decoration-[1.5px] underline-offset-[3px]">{part}</span>
+    ) : (
+      part
+    ),
+  )
+}

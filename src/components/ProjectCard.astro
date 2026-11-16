@@ -1,0 +1,75 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import type { Project } from '../data/projects';
+
+interface Props {
+  project: Project;
+}
+
+const { project: p } = Astro.props;
+const primary = p.demo ?? p.github;
+---
+
+<article
+  class="group flex flex-col overflow-hidden rounded-xl border border-line transition-colors duration-300 hover:border-muted/60"
+>
+  {
+    p.image && (
+      <a
+        href={primary}
+        target={primary ? '_blank' : undefined}
+        rel={primary ? 'noopener' : undefined}
+        tabindex={primary ? undefined : -1}
+        class="block overflow-hidden border-b border-line bg-surface"
+        aria-label={`${p.name} preview`}
+      >
+        <Image
+          src={p.image}
+          alt={p.imageAlt ?? ''}
+          width={960}
+          widths={[480, 960]}
+          sizes="(min-width: 640px) 320px, 100vw"
+          format="webp"
+          class="aspect-[16/10] w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.02]"
+        />
+      </a>
+    )
+  }
+  <div class="flex flex-1 flex-col gap-2 p-4">
+    <div class="flex items-baseline justify-between gap-3">
+      <h3 class="font-medium leading-snug">
+        {
+          primary ? (
+            <a href={primary} target="_blank" rel="noopener" class="link">
+              {p.name}
+            </a>
+          ) : (
+            p.name
+          )
+        }
+      </h3>
+      <span class="shrink-0 font-mono text-xs text-muted">{p.year}</span>
+    </div>
+    <p class="text-sm leading-6 text-muted">{p.description}</p>
+    <div class="mt-auto flex items-end justify-between gap-3 pt-2">
+      <p class="font-mono text-[11px] leading-5 text-muted">{p.stack.join(' · ')}</p>
+      {
+        (p.github || p.demo) && (
+          <div class="flex shrink-0 items-center gap-2.5 text-muted">
+            {p.github && (
+              <a href={p.github} target="_blank" rel="noopener" aria-label="Source on GitHub" class="transition-colors hover:text-fg">
+                <Icon name="github" class="size-4" />
+              </a>
+            )}
+            {p.demo && (
+              <a href={p.demo} target="_blank" rel="noopener" aria-label="Live demo" class="transition-colors hover:text-fg">
+                <Icon name="external" class="size-4" />
+              </a>
+            )}
+          </div>
+        )
+      }
+    </div>
+  </div>
+</article>

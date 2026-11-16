@@ -1,0 +1,34 @@
+---
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+
+const links = [
+  { href: site.links.github, label: 'GitHub', icon: 'github' as const, external: true },
+  { href: site.links.linkedin, label: 'LinkedIn', icon: 'linkedin' as const, external: true },
+  { href: `mailto:${site.email}`, label: 'Email', icon: 'mail' as const, external: false },
+  { href: site.resume, label: 'Résumé', icon: 'file' as const, external: true },
+];
+---
+
+<ul class:list={['flex flex-wrap items-center gap-x-5 gap-y-2 text-sm', className]}>
+  {
+    links.map((l) => (
+      <li>
+        <a
+          href={l.href}
+          target={l.external ? '_blank' : undefined}
+          rel={l.external ? 'noopener' : undefined}
+          class="link inline-flex items-center gap-1.5 text-muted hover:text-fg"
+        >
+          <Icon name={l.icon} class="size-[15px]" />
+          {l.label}
+        </a>
+      </li>
+    ))
+  }
+</ul>
