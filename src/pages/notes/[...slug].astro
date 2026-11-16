@@ -1,18 +1,34 @@
 ---
-import { getCollection, render } from 'astro:content';
-import Note from '../../layouts/Note.astro';
+// Old per-note URLs (/notes/algorithms/binary-search/) now redirect to the
+// matching section of the category page. Kept so existing links keep working.
+import { getCollection } from 'astro:content';
 import { noteMeta } from '../../lib/notes';
+import { site } from '../../data/site';
 
 export async function getStaticPaths() {
   const notes = await getCollection('notes');
-  return notes.map((note) => ({ params: { slug: note.id }, props: { note } }));
+  return notes.map((note) => ({ params: { slug: note.id }, props: { meta: noteMeta(note) } }));
 }
 
-const { note } = Astro.props;
-const { Content } = await render(note);
-const meta = noteMeta(note);
+const { meta } = Astro.props;
+const target = meta.href;
+const canonical = new URL(meta.href, Astro.site ?? 'https://rruiqiu.github.io').href;
 ---
 
-<Note meta={meta}>
-  <Content />
-</Note>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{meta.title} · {site.name}</title>
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href={canonical} />
+    <meta http-equiv="refresh" content={`0; url=${target}`} />
+    <script is:inline define:vars={{ target }}>
+      location.replace(target);
+    </script>
+  </head>
+  <body>
+    <p>Moved to <a href={target}>{target}</a>.</p>
+  </body>
+</html>

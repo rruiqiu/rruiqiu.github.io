@@ -9,6 +9,11 @@ export interface NoteMeta {
   categorySlug: string;
   /** Sub-folder inside the category, if any (e.g. "Structural Patterns"). */
   group?: string;
+  /** Section id inside the category page (last segment of the note id). */
+  anchor: string;
+  /** `/notes/<category>/` */
+  categoryHref: string;
+  /** `/notes/<category>/#<anchor>` */
   href: string;
 }
 
@@ -62,13 +67,18 @@ export function noteMeta(note: Note): NoteMeta {
   const file = parts[parts.length - 1] ?? note.id;
   const group = parts.length > 2 ? parts.slice(1, -1).join(' / ') : undefined;
   const title = note.data.title ?? TITLE_OVERRIDES[file] ?? file;
+  const categorySlug = note.id.split('/')[0] ?? '';
+  const anchor = note.id.split('/').pop() ?? note.id;
+  const categoryHref = `/notes/${categorySlug}/`;
   return {
     id: note.id,
     title,
     category,
-    categorySlug: note.id.split('/')[0] ?? '',
+    categorySlug,
     group,
-    href: `/notes/${note.id}/`,
+    anchor,
+    categoryHref,
+    href: `${categoryHref}#${anchor}`,
   };
 }
 
@@ -98,5 +108,27 @@ export function groupNotes(notes: Note[]): { category: string; notes: NoteMeta[]
       return ra !== rb ? ra - rb : a.meta.title.localeCompare(b.meta.title);
     });
     return { category, notes: list.map((x) => x.meta) };
+  });
+}
+
+export interface CategoryPage {
+  category: string;
+  categorySlug: string;
+  href: string;
+  /** Notes in display order, paired with their collection entry for rendering. */
+  entries: { meta: NoteMeta; note: Note }[];
+}
+
+/** One page per category, in CATEGORY_ORDER, notes in NOTE_ORDER. */
+export function categoryPages(notes: Note[]): CategoryPage[] {
+  const byId = new Map(notes.map((n) => [n.id, n]));
+  return groupNotes(notes).map((g) => {
+    const first = g.notes[0]!;
+    return {
+      category: g.category,
+      categorySlug: first.categorySlug,
+      href: first.categoryHref,
+      entries: g.notes.map((meta) => ({ meta, note: byId.get(meta.id)! })),
+    };
   });
 }

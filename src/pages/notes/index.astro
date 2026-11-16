@@ -10,14 +10,19 @@ const groups = groupNotes(notes);
 <Base title="Notes" description="Study notes by Richard Qiu on algorithms, systems, and full-stack engineering.">
   <section class="mt-12 sm:mt-16">
     <h1 class="text-2xl font-semibold tracking-tight">Notes</h1>
-    <p class="mt-2 text-muted">Study notes I keep while learning. Rough by design.</p>
+    <p class="mt-2 text-muted">Study notes I keep while learning. Rough by design. Each category is one long page with a table of contents.</p>
   </section>
 
   <div class="mt-10 space-y-12">
     {
       groups.map((g) => (
         <section>
-          <h2 class="mb-4 font-mono text-xs uppercase tracking-[0.18em] text-muted">{g.category}</h2>
+          <h2 class="mb-4 font-mono text-xs uppercase tracking-[0.18em] text-muted">
+            <a class="link hover:text-fg" href={g.notes[0]?.categoryHref}>
+              {g.category}
+            </a>
+            <span class="ml-2 normal-case tracking-normal">{g.notes.length} notes</span>
+          </h2>
           <ul class="grid gap-x-8 gap-y-2 sm:grid-cols-2">
             {g.notes.map((n) => (
               <li class="text-[15px] leading-6">

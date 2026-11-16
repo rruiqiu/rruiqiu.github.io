@@ -1,0 +1,175 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import { categoryPages } from '../../../lib/notes';
+
+export async function getStaticPaths() {
+  const notes = await getCollection('notes');
+  return categoryPages(notes).map((page) => ({ params: { category: page.categorySlug }, props: { page } }));
+}
+
+const { page } = Astro.props;
+const rendered = await Promise.all(
+  page.entries.map(async ({ meta, note }) => ({ meta, Content: (await render(note)).Content })),
+);
+
+// Sidebar rows: insert a group label (e.g. "Structural Patterns") before the first note of each group.
+const rows: ({ kind: 'group'; label: string } | { kind: 'note'; meta: (typeof rendered)[number]['meta'] })[] = [];
+let lastGroup: string | undefined;
+for (const { meta } of rendered) {
+  if (meta.group !== lastGroup) {
+    if (meta.group) rows.push({ kind: 'group', label: meta.group });
+    lastGroup = meta.group;
+  }
+  rows.push({ kind: 'note', meta });
+}
+---
+
+<Base
+  title={`${page.category} · Notes`}
+  description={`${page.category} study notes by Richard Qiu: ${rendered.map((r) => r.meta.title).join(', ')}.`}
+  width="full"
+>
+  <div class="lg:grid lg:grid-cols-[11rem_minmax(0,1fr)] lg:gap-x-12">
+    {/* Sidebar (desktop) */}
+    <nav
+      class="hidden lg:block lg:sticky lg:top-10 lg:mt-12 lg:max-h-[calc(100vh-5rem)] lg:self-start lg:overflow-y-auto sm:lg:mt-16"
+      aria-label="Contents"
+      data-toc
+    >
+      <p class="mb-3 font-mono text-xs uppercase tracking-[0.18em] text-muted">{page.category}</p>
+      <ul class="space-y-1.5 border-l border-line">
+        {
+          rows.map((row) =>
+            row.kind === 'group' ? (
+              <li class="pl-3 pt-2 font-mono text-[10px] uppercase tracking-[0.14em] text-muted/80">{row.label}</li>
+            ) : (
+              <li>
+                <a
+                  href={`#${row.meta.anchor}`}
+                  class="-ml-px block border-l border-transparent pl-3 text-[13px] leading-5 text-muted transition-colors hover:text-fg aria-[current]:border-fg aria-[current]:text-fg"
+                  data-toc-link={row.meta.anchor}
+                >
+                  {row.meta.title}
+                </a>
+              </li>
+            ),
+          )
+        }
+      </ul>
+    </nav>
+
+    <div class="min-w-0">
+      <nav class="mt-12 font-mono text-xs text-muted sm:mt-16" aria-label="Breadcrumb">
+        <a class="link hover:text-fg" href="/notes/">Notes</a>
+        <span class="mx-1.5" aria-hidden="true">/</span>
+        <span>{page.category}</span>
+      </nav>
+      <h1 class="mt-3 text-2xl font-semibold tracking-tight">{page.category}</h1>
+      <p class="mt-2 text-sm text-muted">{rendered.length} notes, in one page. Rough by design.</p>
+
+      {/* Contents (mobile / tablet) */}
+      <details class="mt-6 rounded-lg border border-line lg:hidden">
+        <summary class="cursor-pointer select-none px-4 py-2.5 font-mono text-xs uppercase tracking-[0.18em] text-muted">
+          Contents
+        </summary>
+        <ul class="space-y-1.5 border-t border-line px-4 py-3">
+          {
+            rows.map((row) =>
+              row.kind === 'group' ? (
+                <li class="pt-1 font-mono text-[10px] uppercase tracking-[0.14em] text-muted/80">{row.label}</li>
+              ) : (
+                <li>
+                  <a href={`#${row.meta.anchor}`} class="link text-sm text-muted hover:text-fg">
+                    {row.meta.title}
+                  </a>
+                </li>
+              ),
+            )
+          }
+        </ul>
+      </details>
+
+      {
+        rendered.map(({ meta, Content }, i) => (
+          <section id={meta.anchor} class:list={['scroll-mt-10', i === 0 ? 'mt-12' : 'mt-16 border-t border-line pt-10']} data-note>
+            {meta.group && <p class="font-mono text-[11px] uppercase tracking-[0.14em] text-muted">{meta.group}</p>}
+            <h2 class="mt-1 text-2xl font-semibold tracking-tight">
+              <a href={`#${meta.anchor}`} class="hover:text-fg">
+                {meta.title}
+              </a>
+            </h2>
+            <article class="prose mt-6 max-w-none">
+              <Content />
+            </article>
+          </section>
+        ))
+      }
+
+      <p class="mt-14">
+        <a class="link font-mono text-xs text-muted hover:text-fg" href="/notes/">← All notes</a>
+      </p>
+    </div>
+  </div>
+</Base>
+
+<style is:global>
+  /* Sidebar jumps on a page this long are better instant than animated. */
+  html {
+    scroll-behavior: auto;
+  }
+  /* Headings inside a note sit one level below the note title. */
+  .prose :where(h2) {
+    font-size: 1.2em;
+    margin-top: 2em;
+    margin-bottom: 0.8em;
+  }
+  .prose :where(h3) {
+    font-size: 1.05em;
+  }
+  .prose :where(h4) {
+    font-size: 1em;
+  }
+</style>
+
+<script>
+  // Highlight the sidebar entry for the note currently in view.
+  const links = new Map<string, HTMLAnchorElement>();
+  for (const a of document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]')) {
+    links.set(a.dataset.tocLink!, a);
+  }
+  const sections = [...document.querySelectorAll<HTMLElement>('section[data-note]')];
+  if (links.size && sections.length) {
+    let current = '';
+    const setCurrent = (id: string) => {
+      if (id === current) return;
+      links.get(current)?.removeAttribute('aria-current');
+      links.get(id)?.setAttribute('aria-current', 'location');
+      current = id;
+    };
+    const pick = () => {
+      // The last section whose top has passed the 1/3 line of the viewport.
+      const line = window.innerHeight / 3;
+      let best = sections[0]!;
+      for (const s of sections) {
+        if (s.getBoundingClientRect().top <= line) best = s;
+      }
+      setCurrent(best.id);
+    };
+    let ticking = false;
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          pick();
+          ticking = false;
+        });
+      },
+      { passive: true },
+    );
+    window.addEventListener('hashchange', () => setTimeout(pick, 50));
+    pick();
+  }
+</script>

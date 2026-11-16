@@ -166,6 +166,9 @@ body {
 .prose :where(td, th) {
   vertical-align: top;
 }
+.prose :where(a) {
+  overflow-wrap: anywhere;
+}
 .prose :where(img) {
   border-radius: 0.5rem;
   border: 1px solid var(--line);

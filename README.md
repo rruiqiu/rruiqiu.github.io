@@ -34,7 +34,7 @@ Append an object to the array in `src/data/projects.ts`. Set `featured: true` to
 
 ## Add a note
 
-Drop a `.md` file into `src/content/notes/<Category>/`. The file name becomes the title, the folder becomes the category, and the URL is a slug of both (`Full Stack/Web Notes.md` → `/notes/full-stack/web-notes/`). Images go in a sibling folder and are referenced relatively, e.g. `![](./web-notes.assets/pic.png)`. Keep folder names free of spaces so the links parse.
+Drop a `.md` file into `src/content/notes/<Category>/`. The file name becomes the title and the folder becomes the category. Each category is published as one long page with a sidebar table of contents (`Algorithms/Binary Search.md` → `/notes/algorithms/#binary-search`); the old per-note URL (`/notes/algorithms/binary-search/`) still works as a redirect. Images go in a sibling folder and are referenced relatively, e.g. `![](./binary-search.assets/pic.png)`. Keep folder names free of spaces so the links parse.
 
 Optional frontmatter: `title` overrides the file name. Display order inside a category is set in `src/lib/notes.ts` (`NOTE_ORDER`); anything unlisted sorts alphabetically after.
 
