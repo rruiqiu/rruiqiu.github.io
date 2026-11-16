@@ -1,39 +1,30 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import { groupNotes } from '../../lib/notes';
+import Entry from '../../components/Entry.astro';
+import { categoryPages } from '../../lib/notes';
 
 const notes = await getCollection('notes');
-const groups = groupNotes(notes);
+const pages = categoryPages(notes);
 ---
 
-<Base title="Notes" description="Study notes by Richard Qiu on algorithms, systems, and full-stack engineering.">
+<Base title="Notes" description="Study notes by Richard Qiu on data structures and algorithms, systems, design patterns and full-stack engineering.">
   <section class="mt-12 sm:mt-16">
     <h1 class="text-2xl font-semibold tracking-tight">Notes</h1>
-    <p class="mt-2 text-muted">Study notes I keep while learning. Rough by design. Each category is one long page with a table of contents.</p>
+    <p class="mt-2 text-muted">Study notes I keep while learning. Rough by design. One page per topic, with a table of contents.</p>
   </section>
 
-  <div class="mt-10 space-y-12">
+  <div class="mt-10 divide-y divide-line border-y border-line">
     {
-      groups.map((g) => (
-        <section>
-          <h2 class="mb-4 font-mono text-xs uppercase tracking-[0.18em] text-muted">
-            <a class="link hover:text-fg" href={g.notes[0]?.categoryHref}>
-              {g.category}
+      pages.map((p) => (
+        <Entry when={`${p.entries.length} notes`} class="py-5">
+          <h2 class="font-medium leading-snug">
+            <a class="link" href={p.href}>
+              {p.label}
             </a>
-            <span class="ml-2 normal-case tracking-normal">{g.notes.length} notes</span>
           </h2>
-          <ul class="grid gap-x-8 gap-y-2 sm:grid-cols-2">
-            {g.notes.map((n) => (
-              <li class="text-[15px] leading-6">
-                <a class="link" href={n.href}>
-                  {n.title}
-                </a>
-                {n.group && <span class="ml-2 font-mono text-[11px] text-muted">{n.group}</span>}
-              </li>
-            ))}
-          </ul>
-        </section>
+          <p class="mt-1 text-sm leading-6 text-muted">{p.entries.map((e) => e.meta.title).join(' · ')}</p>
+        </Entry>
       ))
     }
   </div>

@@ -46,6 +46,15 @@ const NOTE_ORDER: Record<string, string[]> = {
   'Design Patterns': ['SOLID', 'Proxy', 'Chain of Responsibility'],
 };
 
+/** Display names for category folders. Folder names stay as they are (they form the URLs). */
+const CATEGORY_LABELS: Record<string, string> = {
+  Algorithms: 'DSA',
+};
+
+export function categoryLabel(category: string): string {
+  return CATEGORY_LABELS[category] ?? category;
+}
+
 const TITLE_OVERRIDES: Record<string, string> = {
   'Priority Queue(Heap)': 'Heap / Priority Queue',
   SOLID: 'Design Principles (SOLID)',
@@ -112,7 +121,10 @@ export function groupNotes(notes: Note[]): { category: string; notes: NoteMeta[]
 }
 
 export interface CategoryPage {
+  /** Folder name, e.g. "Algorithms". */
   category: string;
+  /** Display name, e.g. "DSA". */
+  label: string;
   categorySlug: string;
   href: string;
   /** Notes in display order, paired with their collection entry for rendering. */
@@ -126,6 +138,7 @@ export function categoryPages(notes: Note[]): CategoryPage[] {
     const first = g.notes[0]!;
     return {
       category: g.category,
+      label: categoryLabel(g.category),
       categorySlug: first.categorySlug,
       href: first.categoryHref,
       entries: g.notes.map((meta) => ({ meta, note: byId.get(meta.id)! })),

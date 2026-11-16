@@ -26,8 +26,8 @@ for (const { meta } of rendered) {
 ---
 
 <Base
-  title={`${page.category} · Notes`}
-  description={`${page.category} study notes by Richard Qiu: ${rendered.map((r) => r.meta.title).join(', ')}.`}
+  title={`${page.label} · Notes`}
+  description={`${page.label} study notes by Richard Qiu: ${rendered.map((r) => r.meta.title).join(', ')}.`}
   width="full"
 >
   <div class="lg:grid lg:grid-cols-[11rem_minmax(0,1fr)] lg:gap-x-12">
@@ -37,7 +37,7 @@ for (const { meta } of rendered) {
       aria-label="Contents"
       data-toc
     >
-      <p class="mb-3 font-mono text-xs uppercase tracking-[0.18em] text-muted">{page.category}</p>
+      <p class="mb-3 font-mono text-xs uppercase tracking-[0.18em] text-muted">{page.label}</p>
       <ul class="space-y-1.5 border-l border-line">
         {
           rows.map((row) =>
@@ -63,9 +63,9 @@ for (const { meta } of rendered) {
       <nav class="mt-12 font-mono text-xs text-muted sm:mt-16" aria-label="Breadcrumb">
         <a class="link hover:text-fg" href="/notes/">Notes</a>
         <span class="mx-1.5" aria-hidden="true">/</span>
-        <span>{page.category}</span>
+        <span>{page.label}</span>
       </nav>
-      <h1 class="mt-3 text-2xl font-semibold tracking-tight">{page.category}</h1>
+      <h1 class="mt-3 text-2xl font-semibold tracking-tight">{page.label}</h1>
       <p class="mt-2 text-sm text-muted">{rendered.length} notes, in one page. Rough by design.</p>
 
       {/* Contents (mobile / tablet) */}
