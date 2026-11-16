@@ -47,8 +47,11 @@ const fullTitle = title ? `${title} · ${site.name}` : site.name;
     </script>
   </head>
   <body class="bg-bg text-fg">
-    <div class:list={['mx-auto px-6 pb-16 pt-10 sm:pt-14', maxWidth]}>
-      <Nav />
+    <div class:list={['mx-auto px-6 pb-16 pt-4 sm:pt-8', maxWidth]}>
+      {/* Sticky header: stays visible while scrolling, content blurs underneath. */}
+      <div class="sticky top-0 z-20 -mx-6 bg-bg/85 px-6 pb-3 pt-6 backdrop-blur-md sm:pt-6">
+        <Nav />
+      </div>
       <main>
         <slot />
       </main>

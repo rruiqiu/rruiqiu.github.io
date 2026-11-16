@@ -33,7 +33,7 @@ for (const { meta } of rendered) {
   <div class="lg:grid lg:grid-cols-[11rem_minmax(0,1fr)] lg:gap-x-12">
     {/* Sidebar (desktop) */}
     <nav
-      class="hidden lg:block lg:sticky lg:top-10 lg:mt-12 lg:max-h-[calc(100vh-5rem)] lg:self-start lg:overflow-y-auto sm:lg:mt-16"
+      class="hidden lg:block lg:sticky lg:top-24 lg:mt-12 lg:max-h-[calc(100vh-8rem)] lg:self-start lg:overflow-y-auto sm:lg:mt-16"
       aria-label="Contents"
       data-toc
     >
@@ -92,7 +92,7 @@ for (const { meta } of rendered) {
 
       {
         rendered.map(({ meta, Content }, i) => (
-          <section id={meta.anchor} class:list={['scroll-mt-10', i === 0 ? 'mt-12' : 'mt-16 border-t border-line pt-10']} data-note>
+          <section id={meta.anchor} class:list={['scroll-mt-24', i === 0 ? 'mt-12' : 'mt-16 border-t border-line pt-10']} data-note>
             {meta.group && <p class="font-mono text-[11px] uppercase tracking-[0.14em] text-muted">{meta.group}</p>}
             <h2 class="mt-1 text-2xl font-semibold tracking-tight">
               <a href={`#${meta.anchor}`} class="hover:text-fg">
