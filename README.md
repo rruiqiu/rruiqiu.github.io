@@ -44,7 +44,10 @@ Put an SVG/PNG in `public/logos/` and set `logo: '/logos/arctrade.svg'` on the e
 
 ## Deploy
 
-Hosted on GitHub Pages from the `rruiqiu/rruiqiu.github.io` repository. Every push to `main` runs `.github/workflows/deploy.yml`, which builds the site with the official Astro action and publishes `dist/` to Pages. Nothing to do by hand beyond `git push`.
+Hosted on GitHub Pages from the `rruiqiu/rruiqiu.github.io` repository, served from the `gh-pages` branch.
+
+- Push to `main` and `.github/workflows/deploy.yml` builds the site and updates `gh-pages`.
+- Or run `npm run deploy` locally, which builds and pushes `gh-pages` directly without Actions.
 
 To move to a custom domain later: add a `CNAME` record at the registrar pointing to `rruiqiu.github.io`, set the domain under Settings → Pages, and change `site` in `astro.config.mjs`.
 
