@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <style>
+    rect { fill: #171717; }
+    path { fill: #fcfcfc; }
+    @media (prefers-color-scheme: dark) {
+      rect { fill: #e5e5e5; }
+      path { fill: #0a0a0a; }
+    }
+  </style>
+  <rect width="64" height="64" rx="14" />
+  <!-- "R" drawn as a path so it doesn't depend on installed fonts -->
+  <path d="M21 16h13.5c7.2 0 12 4.1 12 10.6 0 4.7-2.6 8.2-6.9 9.7L48 48h-7.6l-7.2-10.6h-5.6V48H21V16zm6.6 6v9.6h6.5c3.6 0 5.8-1.8 5.8-4.8s-2.2-4.8-5.8-4.8h-6.5z" />
+</svg>
