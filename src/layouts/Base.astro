@@ -37,6 +37,22 @@ const fullTitle = title ? `${title} · ${site.name}` : site.name;
     <link rel="canonical" href={Astro.url.href} />
     {/* Privacy-friendly analytics (no cookies). Ignores localhost by default. */}
     <script is:inline data-goatcounter="https://rruiqiu.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+    {
+      /* Google Analytics via Tag Manager (container GTM-PT273GW6 holds GA4 tag G-FLESNR8K3S).
+         Production builds only, so the dev server never sends hits. */
+      import.meta.env.PROD && (
+        <>
+          <script is:inline async src="https://www.googletagmanager.com/gtm.js?id=GTM-PT273GW6"></script>
+          <script is:inline>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+              dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+          </script>
+        </>
+      )
+    }
     {/* Apply the saved theme before first paint to avoid a flash. */}
     <script is:inline>
       (function () {
